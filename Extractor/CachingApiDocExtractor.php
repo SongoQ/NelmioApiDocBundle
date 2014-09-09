@@ -50,7 +50,7 @@ class CachingApiDocExtractor extends ApiDocExtractor
         $this->cache = new ConfigCache($this->cacheFile, $debug);
     }
 
-    public function all($view = ApiDoc::DEFAULT_VIEW)
+    public function all(array $excludedSections = [])
     {
         if ($this->cache->isFresh() === false) {
 
@@ -66,7 +66,7 @@ class CachingApiDocExtractor extends ApiDocExtractor
 
             $resources = array_merge($resources, $this->router->getRouteCollection()->getResources());
 
-            $data = parent::all($view);
+            $data = parent::all($excludedSections);
             $this->cache->write(serialize($data), $resources);
 
             return $data;

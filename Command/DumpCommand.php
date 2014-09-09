@@ -35,6 +35,7 @@ class DumpCommand extends ContainerAwareCommand
                 $this->availableFormats[0]
             )
             ->addOption('view', '', InputOption::VALUE_OPTIONAL, '', ApiDoc::DEFAULT_VIEW)
+            ->addOption('exclude-section', '', InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED, '', [])
             ->addOption('no-sandbox', '', InputOption::VALUE_NONE)
             ->setName('api:doc:dump')
             ;
@@ -66,7 +67,8 @@ class DumpCommand extends ContainerAwareCommand
             $this->getContainer()->set('request', new Request(), 'request');
         }
 
-        $extractedDoc = $this->getContainer()->get('nelmio_api_doc.extractor.api_doc_extractor')->all($view);
+        $excludedSections = $input->getOption('exclude-section');
+        $extractedDoc = $this->getContainer()->get('nelmio_api_doc.extractor.api_doc_extractor')->all($excludedSections);
         $formattedDoc = $formatter->format($extractedDoc);
 
         if ('json' === $format) {
